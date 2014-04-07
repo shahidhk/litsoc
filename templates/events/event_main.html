@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br>
+    <div class='container'>
+        {% for event in event_list %}
+        <div class="row well club_list">
+            <img class='col-md-4 img img-box' src="{{ MEDIA_URL }}{{ event.cover }}" style='max-height:30%;'/>
+            <div class="col-md-8">
+                <center>
+                    <u style="font-size:150%">{{ event.name }}</u>
+                    {% if user.is_authenticated %}
+                    <span class='pull-right'>
+                        <a href="{% url 'edit_event' event.id %}">
+                            <button class='btn btn-sm btn-primary'>
+                                <span class="glyphicon glyphicon-pencil"></span> Edit
+                            </button>
+                        </a>
+                        <a href="{% url 'delete_event' event.id %}">
+                            <button class='btn btn-sm btn-danger'>
+                                <span class="glyphicon glyphicon-remove"></span> Delete
+                            </button>
+                        </a>
+                    </span>
+                    {% endif %}
+                </center>
+            </div>
+            <hr><hr>
+            Club:
+            {% if event.club %}
+                {{ event.club }}
+            {% else %}
+                None
+            {% endif %}
+            <hr>
+            Coordinators:
+            {% for coord in event.coords.all %}
+                {{ coord }},
+            {% empty %}
+                None<br>
+            {% endfor %}
+            <hr>
+            Venue:
+            {% for venue in event.venue.all %}
+                {{ venue }},
+            {% empty %}
+                None<br>
+            {% endfor %}
+
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

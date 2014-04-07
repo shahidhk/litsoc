@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block messages %}
+
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class='container'>
+        {% for club in club_list %}
+        <div class="row well club_list">
+            <img class='col-md-4 img img-box' src="{{ MEDIA_URL }}{{ club.cover }}" style='max-height:30%;'/>
+            <div class="col-md-8">
+                <center>
+                    <u style="font-size:150%">{{ club.name }}</u>
+                    {% if user.is_authenticated %}
+                    <span class='pull-right'>
+                        <a href="{% url 'edit_club' club.id %}">
+                            <button class='btn btn-sm btn-primary'>
+                                <span class="glyphicon glyphicon-pencil"></span> Edit
+                            </button>
+                        </a>
+                        <a href=" {% url 'delete_club' club.id %} ">
+                            <button class='btn btn-sm btn-danger'>
+                                <span class="glyphicon glyphicon-remove"></span> Delete
+                            </button>
+                        </a>
+                    </span>
+                    {% endif %}
+                </center>
+            </div>
+            <hr><hr>
+            Convener :
+            {% for convener in club.convener.all %}
+                 {{ convener.user }},<br>
+            {% endfor %}
+            <hr>
+            Events : 
+            {% for event in club.events.all %}
+                {{ event }},<br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <script type="text/javascript">
+    // function delete_club(url,id){
+    //     alert(url);
+    //     var id = '#'+id;
+    //     var a_id = $();
+    //     alert('All the data related to the club and the related events will be deleted.Click yes to continue');
+    //     a_id.href = url;
+    //     a_id.click();
+    // };
+    </script>
+{% endblock %}

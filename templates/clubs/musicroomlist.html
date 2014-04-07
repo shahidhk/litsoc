@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script type="text/javascript">
+jQuery(document).ready(function ($) {
+  $('.nav-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+});
+</script>
+{% load badge %}
+<div class='container well '>
+  <form class="form-horizontal" method="POST" action="{% url 'approval' %}">
+      {% csrf_token %}
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs" data-tabs="tabs">
+        {% for date,book in book_list %}
+          <li class="{% if forloop.counter == 1 %}active{% endif %}">
+            <a href="#date{{ forloop.counter }}" data-toggle="tab">{{ date|date:"N j" }}
+              <span class="badge badge-important">
+                {% approval_count book %}
+              </span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="tab-content">
+        {% for date,book in book_list %}
+        <div class="tab-pane fade {% if forloop.counter == 1 %}active in{% endif %}" id="date{{ forloop.counter }}" style='min-height:30%'>
+          {% for slot in book %}
+            {% if slot %}
+              <strong>Slot {{ forloop.counter }}</strong>
+              <hr>
+              {% if slot.approved_team %}
+                <a href="{% url 'cancel_musicroom_approval' slot.id %}">
+                  <button class='btn btn-danger' type='button'>
+                    <span class='glyphicon glyphicon-remove'></span> Cancel reservation for {{ slot.approved_team.musiccardid }}
+                  </button>
+                </a>
+                <hr>
+              {% else %}
+                {% for item in slot.teams.all %}
+                  <input type="radio" name="date{{forloop.parentloop.parentloop.counter}}slot{{forloop.parentloop.counter}}" value="{{item.id}}">{{ item.leader_name }} | {{ item.musiccardid }}<br>
+                {% endfor %}
+                <hr>
+                {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      <hr>
+    <center><button class="btn btn-primary" type="submit">Save Changes</button></center>  
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% load bootstrap3 %}
+{% load django_select2_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %} LitSoc {% endblock %} </title>
+    {% import_django_select2_css %}
+
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet">
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+
+    <style type="text/css">
+    body{
+      background:url({{STATIC_URL}}img/back1.jpg) no-repeat scroll;
+      background-size: 100%;
+      background-attachment: fixed;
+    }
+    #navbar_main{
+      font-weight: bold ;
+      background:rgba(232,240,244,0.8);
+    }
+    #navbar_action{
+      width: 80%;
+      position: center;
+    }
+    .navbar-brand{
+      font-size: 2em;
+    }
+    .club_list{
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 1em;
+    }
+    .form-body{
+      background: rgba(219,235,235,0.8);
+      /*background: rgba(0,0,0,0.6);*/
+      border:5px double white;
+      border-radius: 10px;
+      /*color: white;*/
+    }
+    </style>
+  </head>
+  <body>
+    {% block navigation %}
+    <nav class="navbar" role="navigation" id='navbar_main'>
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'home' %}">LitSoc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'club_main' %}">Clubs</a></li>
+            <li><a href="{% url 'event_main' %}">Events</a></li>
+          </ul>
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control input-sm" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default btn-sm">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'musicroom1' %}"><button class='btn btn-primary btn-sm'>Musicroom</button></a></li>
+            {% if user.is_anonymous %}
+            <li><a href="{% url 'login' %}"><button class='btn btn-primary btn-sm'>Login</button></a></li>
+            {% else %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    {% endblock %}
+    {% block messages %}
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}{% endif %} alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>{{ message.tags|upper }}</strong> {{ message|safe }}.
+            </div>
+          </div>
+          {% endfor %}
+        </ul>
+        {% endif %}
+    {% endblock %}
+    {% if not user.is_anonymous %}
+      {% block action %}
+      <center>
+        <nav class="navbar navbar-default" role="navigation" id='navbar_action'>
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+              <ul class="nav navbar-nav">
+                {% if user.get_profile.typ == 'Admin' or user.get_profile.typ == 'Core' %}
+                <li><a href="{% url 'create_club' %}">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-plus'></span> Add Club</button>
+                  </a></li>
+                  {% if user.get_profile.typ != 'Coordinator' or user.get_profile.typ == 'Photography Coordinator' %}
+                <li><a href="{% url 'create_event' %}">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-plus'></span> Add Event</button>
+                </a></li>
+                <li><a href="#">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-plus'></span> Add Update</button>
+                </a></li>
+                <li><a href="{% url 'add_venue' %}">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-plus'></span> Add Venue</button>
+                </a></li>
+                <li><a href="{% url 'add_user' %}">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-plus'></span> Add User</button>
+                </a></li>
+                <li><a href="{% url 'approval' %}">
+                  <button class='btn btn-sm btn-default'><span class='glyphicon glyphicon-music'></span> MusicRoom Approvals</button>
+                  {% endif %}
+                  {% endif %}
+                </a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+      </center>
+      {% endblock %}
+    {% endif %}
+    {% block content %}
+
+    {% endblock %}
+    <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/prettify.js"></script>
+<!--    <script src="{{ STATIC_URL }}js/select2.js"></script>-->
+    {% import_django_select2_js %}
+  </body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %} {% endblock %} LitSoc</title>
+        <!-- {% block fb_meta %}{% endblock fb_meta %} -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{{STATIC_URL}}css/bootstrap-fileupload.min.css" rel="stylesheet" media="screen">
+        <link href="{{STATIC_URL}}css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+        <link href="{{STATIC_URL}}css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="{{STATIC_URL}}css/bootstrap-rowlink.css" rel="stylesheet">
+        <script src="{{STATIC_URL}}js/bootstrap.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/tinymce/tinymce.min.js"></script>
+        <div id="fb-root"></div>
+        <script>
+          // window.fbAsyncInit = function() {
+          //   // init the FB JS SDK
+          //   FB.init({
+          //     appId      : '1386559518242449',                        // App ID from the app dashboard
+          //     channelUrl : '//www.saarang.iitm.ac.in/channel.html', // Channel file for x-domain comms
+          //     status     : true,                                 // Check Facebook Login status
+          //     xfbml      : true                                  // Look for social plugins on the page
+          //   });
+
+          //   // Additional initialization code such as adding Event Listeners goes here
+          // };
+
+          // // Load the SDK asynchronously
+          // (function(d, s, id){
+          //    var js, fjs = d.getElementsByTagName(s)[0];
+          //    if (d.getElementById(id)) {return;}
+          //    js = d.createElement(s); js.id = id;
+          //    js.src = "//connect.facebook.net/en_US/all.js";
+          //    fjs.parentNode.insertBefore(js, fjs);
+          //  }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <style type="text/css">
+        </style>
+    </head>
+    <body>
+            {% block header %}
+            <div id="navbar">
+                <div id="lit_logo"></div>
+                <div id="home" class="nav_tab active">Home</div>
+                <div id="calender" class="nav_tab">Calender</div>
+                <div id="points" class="nav_tab">Points</div>
+                <div id="downloads" class="nav_tab">Downloads</div>
+                <div id="gallery" class="nav_tab">Gallery</div>
+                <div id="hostels" class="nav_tab">Hostels</div>
+                <div id="clubs" class="nav_tab">Clubs</div>
+            </div>
+            <br><br><br><br>
+            {% endblock %}
+            
+            {% block action %}
+
+            {% if not user.is_anonymous %}
+            <div class="container" id="action">
+                <div class="navbar">
+                    <div class="navbar-inner">
+                        <div class="">
+                        <ul class="nav">
+                            {% if user.get_profile.typ != 3 or  user.get_profile.typ != 4 %}
+                            <div class="btn-group nav-button">
+                              <button class="btn" data-target="#clublistModal" data-toggle="modal">Clubs</button>
+                              <button class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu">
+                                {% if user.get_profile.typ == 1 %}
+                                <li><a data-toggle="modal" href="#createclubModal"><i class="icon-plus"></i> Create Club</a></li>
+                                <li class="divider"></li>
+                                {% endif %}
+                                <li><a data-toggle="modal" href="#clublistModal"><i class="icon-list"></i> Club list </a></li>
+                              </ul>
+                            </div>
+                            {% endif %}
+                            <div class="btn-group ">
+                              <button class="btn" data-target="#eventlistModal" data-toggle="modal">Events</button>
+                              <button id="ddm" class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu" aria-labelledby="ddm">
+                              {% if user.get_profile.typ != 3 or user.get_profile.typ != 4 %}
+                                <li><a data-toggle="modal" href="#createeventModal"><i class="icon-plus"></i> Create Event</a></li>
+                                <li class="divider"></li>
+                              {% endif %}
+                                <li><a data-toggle="modal" href="#eventlistModal"><i class="icon-list"></i> Event list </a></li>
+                              </ul>
+                            </div>
+                            <div class="btn-group">
+                              <button class="btn" data-target="#updatelistModal" data-toggle="modal">Updates</button>
+                              <button id="ddm" class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu" aria-labelledby="ddm">
+                                {% if user.get_profile.typ != 4 %}
+                                  <li><a data-toggle="modal" href="#createupdateModal"><i class="icon-plus"></i> Create Update</a></li>
+                                {% endif %}  
+                                <li class="divider"></li>
+                                <li><a data-toggle="modal" href="#updatelistModal"><i class="icon-list"></i> Update list </a></li>
+                              </ul>
+                            </div>
+                            {% if user.get_profile.music_approval %}
+                            <div class="btn-group ">
+                              <button class="btn" data-target="#musicroomlistModal" data-toggle="modal">Approvals</button>
+                              <button id="ddm" class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu" aria-labelledby="ddm">
+                                <li><a data-toggle="modal" href="#musicroomlistModal"><i class="icon-list"></i> List</a></li>
+                                <li class="divider"></li>
+                                <li><a data-toggle="modal" href="#musicroomlistModal"><i class="icon-list"></i> History</a></li>
+                            {% endif %}
+                              </ul>
+                            </div>
+                            {% if user.get_profile.typ != 3 or user.get_profile.typ != 4 %}
+                            <div class="btn-group">
+                              <button class="btn" data-toggle="modal" data-target="#userlistModal">Users</button>
+                              <button class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu">
+                                <li><a data-toggle="modal" href="#addconvenerModal"><i class="icon-plus-sign"></i> Add User</a></li>
+                              </ul>
+                            </div>
+                            {% endif %}
+                            {% ifequal request.path "/gallery/" %}
+                            <div class="btn-group offset4">
+                              <button class="btn" data-toggle="modal" data-target="#uploadModal">Upload</button>
+                            </div>
+                            {% endifequal %}
+                        </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+            {% endblock %}
+
+            {% block content %}
+               
+
+            {% endblock %}
+
+            <div class="pag-footer fixed">
+
+            </div>
+            <script src="{{STATIC_URL}}js/dropdown.js"></script>
+            <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+            <script src="{{STATIC_URL}}js/bootstrap-fileupload.min.js"></script>
+            <script src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
+            <script type="text/javascript" src="{{STATIC_URL}}js/jquery.fancybox.js?v=2.1.5"></script>
+            <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery.fancybox.css?v=2.1.5" media="screen" />
+            <!-- <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery.fancybox-thumbs.css?v=1.0.7" /> -->
+            <script type="text/javascript" src="{{STATIC_URL}}js/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+
+        </body>
+        </html>

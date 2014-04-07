@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class='container well'>
+  <center>
+    <h3><b>Musicroom Reservation-1</b></h3>
+    <form method="post" id='musicclubform' action="{% url 'musicroom1' %}">
+      {% csrf_token %}
+      <input type='hidden' name='date' id='dat_hidden'>
+      <input type='hidden' name='slot' id='slot_hidden'>
+    </form>
+    <table class="table table-bordered table-condensed">
+      <caption>Select any slot. Red indicates booked slots which are not approved yet. Gray indicates booked slots</caption>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th><center>Slot 1 : 5pm to 7pm</center></th>
+          <th><center>Slot 2 : 7pm to 9pm</center></th>
+          <th><center>Slot 3 : 9pm to 11pm</center></th>
+          <th><center>Slot 4 : 11pm to 1am</center></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for date,date_list in book_list %}
+        <tr>
+          <td>{{date}}</td>
+          {% for slot in date_list %}
+          <td>
+            {% if not slot %}
+              <center><button type="button" class="btn btn-success btn-sm" onclick="goto('{{date|date:"o-n-j"}}','{{date}}',{{forloop.counter}})" >Book</button></a></center>
+            {% else %}
+                {% if slot.approved_team %}
+                  <center>
+                    <button type="submit" class="btn disabled btn-small">Already booked </button><br/>
+                    <span><small>ID:{{ slot.approved_team.musiccardid }}</small></span>
+                  </center>
+
+                {% else %}
+              <center>
+                <button type="button" class="btn btn-danger btn-small" onclick="goto('{{date|date:"o-n-j"}}','{{date}}',{{forloop.counter}})" >Unapproved</button></a>
+                <br>
+                <span></small>Number of bookings:{{ slot.teams.count }}</small></span>
+              </center>
+              {% endif %}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <script type="text/javascript">
+      function goto(date1,date2,slot){
+        hidden_dat = $("#dat_hidden"); 
+        hidden_dat.val(date1);
+        hidden_slot = $("#slot_hidden"); 
+        hidden_slot.val(slot);
+        $('#musicclubform').submit();
+      };
+    </script>
+  </center>  
+</div>
+
+{% endblock %}
