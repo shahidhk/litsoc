@@ -1,2 +1,5 @@
 media/*
 */migrations/*
+local_settings.py
+*.pyc
+
