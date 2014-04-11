@@ -6,8 +6,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', RedirectView.as_view(url='home/')),
-    url(r'^home/', include('home.urls')),
+    # url(r'^$', RedirectView.as_view(url='home/')),
+    url(r'^$', include('home.urls')),
     url(r'^clubs/', include('clubs.urls')),
     url(r'^gallery/', include('gallery.urls')),
     url(r'^points/', include('points.urls')),

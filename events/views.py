@@ -83,7 +83,8 @@ def edit_event(request,event_id):
         messages.success(request,'Details successfully updated')
         HttpResponseRedirect(reverse('event_main'))
     title = "Edit Event"
-    return_url = reverse('edit_event',args={int(event_id)},)
+    # return_url = reverse('edit_event',args={int(event_id)},)
+    return_url =""
     to_return={
         'form' : form,
         'title' : title,
