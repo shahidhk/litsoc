@@ -16,7 +16,7 @@ class Event(models.Model):
     oneliner = models.CharField(max_length=200,blank=True)
     venue = models.ManyToManyField(Venue,related_name='event_venue',blank = True,null=True)
     typ = models.CharField(choices=(('team','Inter Hostel Team Event'),('hostel','Hostel Event')), max_length = 50)
-    description = models.CharField(max_length=40000,blank = True)
+    description = models.TextField(max_length=40000,blank = True)
     coords = models.ManyToManyField(UserProfile,related_name='coord',blank = True) 
     photo_coord = models.ManyToManyField(UserProfile,related_name='ph_coord',blank = True,null=True)
     created_by = models.ForeignKey(UserProfile,related_name='edited_by')

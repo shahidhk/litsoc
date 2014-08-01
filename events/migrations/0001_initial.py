@@ -22,14 +22,22 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('oneliner', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
-            ('venue', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='event_venue', null=True, to=orm['events.Venue'])),
             ('typ', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=40000, blank=True)),
+            ('description', self.gf('django.db.models.fields.TextField')(max_length=40000, blank=True)),
             ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='edited_by', to=orm['userprofile.UserProfile'])),
             ('cover', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='cover_event', null=True, to=orm['litsoc.PhotoModel'])),
             ('approved', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'events', ['Event'])
+
+        # Adding M2M table for field venue on 'Event'
+        m2m_table_name = db.shorten_name(u'events_event_venue')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('event', models.ForeignKey(orm[u'events.event'], null=False)),
+            ('venue', models.ForeignKey(orm[u'events.venue'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['event_id', 'venue_id'])
 
         # Adding M2M table for field coords on 'Event'
         m2m_table_name = db.shorten_name(u'events_event_coords')
@@ -75,6 +83,9 @@ class Migration(SchemaMigration):
         # Deleting model 'Event'
         db.delete_table(u'events_event')
 
+        # Removing M2M table for field venue on 'Event'
+        db.delete_table(db.shorten_name(u'events_event_venue'))
+
         # Removing M2M table for field coords on 'Event'
         db.delete_table(db.shorten_name(u'events_event_coords'))
 
@@ -107,7 +118,7 @@ class Migration(SchemaMigration):
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -115,7 +126,7 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         u'clubs.club': {
@@ -127,7 +138,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'images': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'image_club'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.PhotoModel']"}),
             'links': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'clubs_links'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.LinkModel']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'oneliner': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
         },
         u'contenttypes.contenttype': {
@@ -144,7 +155,7 @@ class Migration(SchemaMigration):
             'coords': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'coord'", 'blank': 'True', 'to': u"orm['userprofile.UserProfile']"}),
             'cover': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'cover_event'", 'null': 'True', 'to': u"orm['litsoc.PhotoModel']"}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'edited_by'", 'to': u"orm['userprofile.UserProfile']"}),
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '40000', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'max_length': '40000', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'images': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'image_event'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.PhotoModel']"}),
             'links': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'event_links'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.LinkModel']"}),
@@ -153,7 +164,7 @@ class Migration(SchemaMigration):
             'photo_coord': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'ph_coord'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['userprofile.UserProfile']"}),
             'time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'typ': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'venue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'event_venue'", 'null': 'True', 'to': u"orm['events.Venue']"})
+            'venue': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'event_venue'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['events.Venue']"})
         },
         u'events.venue': {
             'Meta': {'object_name': 'Venue'},
@@ -186,7 +197,7 @@ class Migration(SchemaMigration):
         u'userprofile.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'assigned': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': "'//avatar/default.jpg'", 'max_length': '100'}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': "'C/avatar/default.jpg'", 'max_length': '100'}),
             'contact_number': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             'hostel': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

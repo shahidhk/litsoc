@@ -11,12 +11,12 @@ class Migration(SchemaMigration):
         # Adding model 'Update'
         db.create_table(u'updates_update', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('name', self.gf('django.db.models.fields.TextField')(max_length=100)),
             ('oneliner', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('updated_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('update_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='update_by', to=orm['userprofile.UserProfile'])),
-            ('desc', self.gf('django.db.models.fields.CharField')(max_length=40000, blank=True)),
+            ('desc', self.gf('django.db.models.fields.TextField')(max_length=40000, blank=True)),
             ('event', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='event_update', null=True, to=orm['events.Event'])),
             ('club', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='club_update', null=True, to=orm['clubs.Club'])),
             ('approved', self.gf('django.db.models.fields.BooleanField')(default=False)),
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -81,7 +81,7 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         u'clubs.club': {
@@ -93,7 +93,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'images': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'image_club'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.PhotoModel']"}),
             'links': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'clubs_links'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.LinkModel']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'oneliner': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
         },
         u'contenttypes.contenttype': {
@@ -119,7 +119,7 @@ class Migration(SchemaMigration):
             'photo_coord': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'ph_coord'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['userprofile.UserProfile']"}),
             'time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'typ': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'venue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'event_venue'", 'null': 'True', 'to': u"orm['events.Venue']"})
+            'venue': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'event_venue'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['events.Venue']"})
         },
         u'events.venue': {
             'Meta': {'object_name': 'Venue'},
@@ -155,12 +155,12 @@ class Migration(SchemaMigration):
             'club': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'club_update'", 'null': 'True', 'to': u"orm['clubs.Club']"}),
             'cover': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'cover_update'", 'null': 'True', 'to': u"orm['litsoc.PhotoModel']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'desc': ('django.db.models.fields.CharField', [], {'max_length': '40000', 'blank': 'True'}),
+            'desc': ('django.db.models.fields.TextField', [], {'max_length': '40000', 'blank': 'True'}),
             'event': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'event_update'", 'null': 'True', 'to': u"orm['events.Event']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'images': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'update_images'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.PhotoModel']"}),
             'links': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'links_update'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['litsoc.LinkModel']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.TextField', [], {'max_length': '100'}),
             'oneliner': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'update_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'update_by'", 'to': u"orm['userprofile.UserProfile']"}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
@@ -168,7 +168,7 @@ class Migration(SchemaMigration):
         u'userprofile.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'assigned': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': "'//avatar/default.jpg'", 'max_length': '100'}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': "'C/avatar/default.jpg'", 'max_length': '100'}),
             'contact_number': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             'hostel': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
